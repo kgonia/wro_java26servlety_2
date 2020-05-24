@@ -29,4 +29,12 @@ public class UserRepository {
     public void saveUser(User user){
         users.add(user);
     }
+
+    public User getByLogin(String login) {
+        return users
+                .stream()
+                .filter(user -> user.getLogin().equals(login))
+                .findFirst()
+                .orElse(null);
+    }
 }

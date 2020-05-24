@@ -2,6 +2,7 @@ package org.sda.java26.servlet;
 
 import org.sda.java26.model.User;
 import org.sda.java26.repository.UserRepository;
+import org.sda.java26.util.PasswordUtil;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,11 +18,6 @@ public class CreateUserServlet extends HttpServlet {
     private UserRepository userRepository = UserRepository.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        addUsersToRequestAndForward(req, resp);
-    }
-
-    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = getUserParamsAndCreateUser(req);
         if (user == null) {
@@ -31,7 +27,10 @@ public class CreateUserServlet extends HttpServlet {
         }
         userRepository.saveUser(user);
 
-        addUsersToRequestAndForward(req, resp);
+        req.setAttribute("user", user);
+        RequestDispatcher requestDispatcher
+                = req.getRequestDispatcher("/registerConfirmation.jsp");
+        requestDispatcher.forward(req, resp);
     }
 
     private User getUserParamsAndCreateUser(HttpServletRequest req) {
@@ -45,16 +44,9 @@ public class CreateUserServlet extends HttpServlet {
             return null;
         }
 
-        User user = new User(name, surname, login, password, email);
+        String hashedPassword = PasswordUtil.hashPassword(password);
+        User user = new User(name, surname, login, hashedPassword, email);
         return user;
     }
 
-    private void addUsersToRequestAndForward(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // List<User> userList = userRepository.findUsers();
-        req.setAttribute("users", userRepository.findUsers());
-
-        RequestDispatcher requestDispatcher
-                = req.getRequestDispatcher("/usersList.jsp");
-        requestDispatcher.forward(req, resp);
-    }
 }

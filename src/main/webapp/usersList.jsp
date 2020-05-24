@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+
+<form method="post" action="/logout">
+    <input type="submit" value="Wyloguj">
+</form>
+
+<br>
     TO STRONA Z UŻYTKOWNIKAMI
     <br>
     <div class="container">
